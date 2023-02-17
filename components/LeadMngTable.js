@@ -105,38 +105,30 @@ console.log('eeditsdata',editdata)
   })
     .catch((err) => alert("Something went wrong"));
   };
-
-  const [eventDetails, setEventDetails] = useState({
-    date: "",})
-
+  
+  const [data1,setData1] = useState([])
   const notify = () => {
     axios.get(`http://192.168.1.7/testAPI/api/Chat/getLeadMng/${state.phoneNo}`)
     .then((res) => {
     //console.log(res.data);
-    setData(res.data)
+    setData1(res.data)
     })
     }
-//     useEffect(() => notify(), []);
+//  useEffect(() => notify(), []);
 
 const [style, setStyle] = useState('buttoni');
-  const changeStyle = () => {
-    console.log("you just clicked");
-  
+  const changeStyle = () => {  
     setStyle("cont2");
   };
 
-const currDate = () => {
-  const current = new Date();
-  const date = `${current.getDate()}/${current.getMonth()+1}/${current.getFullYear()}`;
-  console.log(date)
-}
-  
+  var myCurrentDate = new Date();
+  var date = myCurrentDate.getFullYear() + '-' + (myCurrentDate.getMonth()+1) + '-' + myCurrentDate.getDate();// +' '+ myCurrentDate.getHours()+':'+ myCurrentDate.getMinutes()+':'+ myCurrentDate.getSeconds();
+  const newCurrentDate = "Current Date and Time: "+date;
+
 return (
 <>
+{/* <p>{newCurrentDate}</p> */}
 <div>
-<div className="currDate">
-      <h1>Current date is {eventDetails.date}</h1>
-    </div>
 <div id="prf">
       <div>
     <a onClick={()=>notify()} data-toggle="modal" data-target="#myBell" ><span onClick={changeStyle} className={style}><i className="fa fa-bell" id='bell'></i></span></a>
