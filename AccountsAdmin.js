@@ -74,6 +74,8 @@ const AccountsAdmin = () => {
         typeOfPay:"", // for outgoing
         supportDoc: "",
         supportDocOut: "", //for outhoing
+        date: "",
+        toDate: "",
     });
     
       const resetEmployeeDetails = () => {
@@ -89,6 +91,8 @@ const AccountsAdmin = () => {
         typeOfPay: "", //for outgoing
         supportDoc: "",
         supportDocOut: "", //for outgoing
+        date: "",
+        toDate: "",
         };
         setEmployeeDetails(_resetEmployee);
     };
@@ -135,7 +139,7 @@ const AccountsAdmin = () => {
         };
         {
           Object.keys(_errors).length == 0
-            ? axios.post("http://192.168.1.10/testAPI/api/Chat/postIncomeAcc" ,_requestData, config)
+            ? axios.post("http://192.168.1.9/testAPI/api/Chat/postIncomeAcc" ,_requestData, config)
                 .then((res) => {
                          console.log(res.data)
                          if (res.status === 200) {
@@ -154,7 +158,7 @@ const AccountsAdmin = () => {
 
     const [data,setData] = useState([])
     const initializeEvent = () => {
-    axios.get("http://192.168.1.10/testAPI/api/Chat/fetchIncomeAcc")
+    axios.get("http://192.168.1.9/testAPI/api/Chat/fetchIncomeAcc")
     .then((res) => {
     console.log(res.data);
     setData(res.data)
@@ -172,7 +176,7 @@ const AccountsAdmin = () => {
       };
       {
         Object.keys(_errors).length == 0
-          ? axios.post("http://192.168.1.10/testAPI/api/Chat/postOutgoAcc" ,_requestData, config)
+          ? axios.post("http://192.168.1.9/testAPI/api/Chat/postOutgoAcc" ,_requestData, config)
               .then((res) => {
                        console.log(res.data)
                        if (res.status === 200) {
@@ -190,98 +194,99 @@ const AccountsAdmin = () => {
 
 
   const outgoing = () => {
-  axios.get("http://192.168.1.10/testAPI/api/Chat/fetchOutgoAcc")
+  axios.get("http://192.168.1.9/testAPI/api/Chat/fetchOutgoAcc")
   .then((res) => {
   console.log(res.data);
   setData(res.data)
   })
   };
-  //useEffect(() => outgoing(), []);
-  
-  
-  const incomeDateRng = () => {
-    axios.get(`http://192.168.1.10/testAPI/api/Chat/fetchIncomeAcc`)
+ 
+  const fetchAcc = () => {
+    axios.get("http://192.168.1.9/testAPI/api/Chat/fetchAcc")
     .then((res) => {
     console.log(res.data);
     setData(res.data)
     })
     };
+//--------------------------------------------FETCH INCOME BY DATE RANGE---------------------------------------------------//
+  const incomeDateRng = () => {
+   
+    let _requestData = {
+      ...employeeDetails,
+    };
 
-    // const editTest=(id)=>{
-    //   console.log('getdata',id)
-    //   setEditdata(id);
-    //   setfollowUp1(id.followUp1)
-    //   setfollowUp2(id.followUp2)
-    //   setfollowUp3(id.followUp3)    
-    // }
-    // const incomeDateRng = () => {
-  
-    //   let _requestData = {
-    //     ...employeeDetails,
-    //   };
-  
-    //  console.log(_requestData)
-    //   {
-       
-    //       axios
-    //           .get(`http://192.168.1.10/testAPI/api/Chat/fetchDateRng`, _requestData,config)
-    //           .then((res) => {
-    //              console.log(res)
-    //              if (res.data != "Failed") {
-    //                localStorage.setItem(
-    //                 "user_info",
-    //                  JSON.stringify(res.data)
-    //                );
-    //                navigate("/incomedatRngModal",{state:res.data});
-    //              }
-    //              if (res.data == "Failed") {
-    //               alert("Invalid Credantials")
-    //              }
-  
-    //              resetEmployeeDetails();
-    //           })
-    //           .catch((e) => {
-    //              if (e.res.data.message == "Incorrect Password") {
-    //             {
-    //                alert("Account Not Found");
-    //              }
-    //             }
-    //           })
-    //   }
-    // };
-    
-    console.log('events',employeeDetails)
-   const [eventTableDetails, setEventTableDetails] = useState(null);
-   const initializeEvent1 = () => {
-    axios
-      .get(`http://192.168.1.10/testAPI/api/Chat/sumAmount`)
-      .then((response) => {
-        setEventTableDetails(response.data);
-        //console.log(response)
-         if (response.data != null) {
-           let requestForSet = {
-             id: response.data.id,
-             amountPaid: response.data.amountPaid,
-            //  email: response.data.email,
-            //  phoneNo: response.data.phoneNo,
-            //  password: response.data.password,
-            //  image: response.data.image,
-           };
-           setEmployeeDetails(requestForSet);
-         }
-      })
-      .catch((e) => {});
+   console.log(_requestData)
+    {
+       axios
+            .post(`http://192.168.1.9/testAPI/api/Chat/fetchIncomeDateRng`, _requestData,config)
+            .then((res) => {
+               console.log('response',res.data)
+               setData(res.data)
+               if (res.data != "Failed") {
+                 localStorage.setItem(
+                  "user_info",
+                   JSON.stringify(res.data)
+                 );
+                
+               }
+               if (res.data == "Failed") {
+                alert("Invalid Credantials")
+               }
+               resetEmployeeDetails();
+            })
+            .catch((e) => {
+               if (e.res.data.message == "Incorrect Password") {
+              {
+                 alert("Account Not Found");
+               }
+              }
+            })
+    }
   };
-  
-  useEffect(() => initializeEvent1(), []);
-  console.log('response',eventTableDetails)
+
+
+  //--------------------------------------------FETCH OUTGOING BY DATE RANGE---------------------------------------------------//
+  const outgoingDateRng = () => {
+   
+    let _requestData = {
+      ...employeeDetails,
+    };
+
+   console.log(_requestData)
+    {
+       axios
+            .post(`http://192.168.1.9/testAPI/api/Chat/fetchOutgoingDateRng`, _requestData,config)
+            .then((res) => {
+               console.log('response',res.data)
+               setData(res.data)
+               if (res.data != "Failed") {
+                 localStorage.setItem(
+                  "user_info",
+                   JSON.stringify(res.data)
+                 );
+               }
+               if (res.data == "Failed") {
+                alert("Invalid Credantials")
+               }
+               resetEmployeeDetails();
+            })
+            .catch((e) => {
+               if (e.res.data.message == "Incorrect Password") {
+              {
+                 alert("Account Not Found");
+               }
+              }
+            })
+    }
+  };
+   
     return(
     <>
    <button type="button" value="Income" class="btn btn-info btn-sm, btn1" data-toggle="modal" data-target="#incomeModal">Income</button>
    <button type="button" value="Outgoing" class="btn btn-info btn-sm, btn1" data-toggle="modal" data-target="#outgoingModal">Outgoing</button>
    <button type="button" value="GST" class="btn btn-info btn-sm, btn1" data-toggle="modal" data-target="#incomeModal">GST</button>
    <button type="button" value="Total" class="btn btn-info btn-sm, btn1" data-toggle="modal" data-target="#incomeModal">Total</button>
-   <button type="button" value="P&L" class="btn btn-info btn-sm, btn1" data-toggle="modal" data-target="#plModal">P&L</button>
+   <button type="button" value="P&L" class="btn btn-info btn-sm, btn1" data-toggle="modal" data-target="#plModal" onClick={fetchAcc}>P&L</button>
    <button type="button" value="Invoice" class="btn btn-info btn-sm, btn1" data-toggle="modal" data-target="#inModal">Invoice</button>
    <button type="button" value="ViewAcc" class="btn btn-info btn-sm, btn1" data-toggle="modal" data-target="#viewModal">View Account</button>
    
@@ -438,24 +443,12 @@ const AccountsAdmin = () => {
       <div class="modal-content">
         <div class="modal-header">
           <label>From</label>
-          <input type='date' class='acc-daterng'/>
+          <input type='date' name='date' value={employeeDetails.date} onChange={handleChangeInput} class='acc-daterng'/>
           <label>To</label>
-          <input type='date' class='acc-daterng'/>
-          <button type="button" value="GST" class="btn btn-info btn-sm, btn1" data-toggle="modal" data-target="#incomedatRngModal" onClick={incomeDateRng}>Income</button>
-          <button type="button" class="btn btn-info btn-sm, btn1" data-dismiss="modal" >Outgoing</button>
-        </div>
-  <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Close</button>
-        </div>
-        </div>
-        </div>
-
-{/*----------------------------------------INCOME DATE RANGE TBLE-----------------------------------*/}
-
-        <div class="modal fade" id="incomedatRngModal" role="dialog">
-    <div class="modal-dialog modal-sm">
-      <div class="modal-content">
-        <div class="modal-header">
-        <table class='table table-bordered'>
+          <input type='date' name='toDate' value={employeeDetails.toDate} onChange={handleChangeInput} class='acc-daterng'/>
+          <button type="button"  class="btn btn-info btn-sm, btn1" data-toggle="modal"  onClick={incomeDateRng}>Income</button>
+          <button type="button"  class="btn btn-info btn-sm, btn1" data-toggle="modal"  onClick={outgoingDateRng}>Outgoing</button>
+          <table class='table table-bordered'>
   <thead>
       <tr>
           <th id='color'>Sl.No</th>
@@ -480,13 +473,15 @@ const AccountsAdmin = () => {
       } 
   </tbody>
   </table>
+  <div>
   <label>Total Amount Paid</label>
-        <input name="total" value={employeeDetails.amountPaid} placeholder='Total amount' class="acc-gst-tot" readOnly/>
+        <input name="total" value={parseFloat(data.amountPaid)+parseFloat(data.id)} placeholder='Total amount' class="acc-gst-tot" readOnly/>
+        </div>
         </div>
   <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Close</button>
         </div>
         </div>
-        </div> 
+        </div>
 
 
 {/* -----------------------------------------------OUTGOING TABLE--------------------------------------------------------- */}
@@ -495,7 +490,7 @@ const AccountsAdmin = () => {
         <div class="modal-content">
         <div class="modal-header">
         <div>
-          <h1 class='title'>Lead Management Information For User</h1>
+          <h1 class='title'> View Outgoing Information</h1>
         </div>   
  
   <table class='table table-bordered'>
@@ -537,17 +532,6 @@ const AccountsAdmin = () => {
   </div>
   </div>
 
-  <div class="modal fade" id="viewModal" role="dialog">
-    <div class="modal-dialog modal-sm">
-      <div class="modal-content">
-        <div class="modal-header">
-        <button type="button" value="ViewAccIncome" class="btn btn-info btn-sm, btn1" data-toggle="modal" data-target="#viewIncome" onClick={initializeEvent}>View Income</button>
-        <button type="button" value="ViewAccOutgoing" class="btn btn-info btn-sm, btn1" data-toggle="modal" data-target="#viewOutgoing" onClick={outgoing}>View Outgoing</button>
-        </div>
-        </div>
-        </div>
-        </div>
-
 
 {/* ------------------------------------------------INCOME TABLE----------------------------------------------------------- */}
 
@@ -556,7 +540,7 @@ const AccountsAdmin = () => {
       <div class="modal-content">
         <div class="modal-header">
         <div>
-          <h1 class='title'>Lead Management Information For User</h1>
+          <h1 class='title'>View Income Information </h1>
         </div>   
  
   <table class='table table-bordered'>
