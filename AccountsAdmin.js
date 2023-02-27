@@ -139,7 +139,7 @@ const AccountsAdmin = () => {
         };
         {
           Object.keys(_errors).length == 0
-            ? axios.post("http://192.168.1.9/testAPI/api/Chat/postIncomeAcc" ,_requestData, config)
+            ? axios.post("http://192.168.1.3/testAPI/api/Chat/postIncomeAcc" ,_requestData, config)
                 .then((res) => {
                          console.log(res.data)
                          if (res.status === 200) {
@@ -158,7 +158,7 @@ const AccountsAdmin = () => {
 
     const [data,setData] = useState([])
     const initializeEvent = () => {
-    axios.get("http://192.168.1.9/testAPI/api/Chat/fetchIncomeAcc")
+    axios.get("http://192.168.1.3/testAPI/api/Chat/fetchIncomeAcc")
     .then((res) => {
     console.log(res.data);
     setData(res.data)
@@ -176,7 +176,7 @@ const AccountsAdmin = () => {
       };
       {
         Object.keys(_errors).length == 0
-          ? axios.post("http://192.168.1.9/testAPI/api/Chat/postOutgoAcc" ,_requestData, config)
+          ? axios.post("http://192.168.1.3/testAPI/api/Chat/postOutgoAcc" ,_requestData, config)
               .then((res) => {
                        console.log(res.data)
                        if (res.status === 200) {
@@ -194,7 +194,7 @@ const AccountsAdmin = () => {
 
 
   const outgoing = () => {
-  axios.get("http://192.168.1.9/testAPI/api/Chat/fetchOutgoAcc")
+  axios.get("http://192.168.1.3/testAPI/api/Chat/fetchOutgoAcc")
   .then((res) => {
   console.log(res.data);
   setData(res.data)
@@ -202,7 +202,7 @@ const AccountsAdmin = () => {
   };
  
   const fetchAcc = () => {
-    axios.get("http://192.168.1.9/testAPI/api/Chat/fetchAcc")
+    axios.get("http://192.168.1.3/testAPI/api/Chat/fetchAcc")
     .then((res) => {
     console.log(res.data);
     setData(res.data)
@@ -218,7 +218,7 @@ const AccountsAdmin = () => {
    console.log(_requestData)
     {
        axios
-            .post(`http://192.168.1.9/testAPI/api/Chat/fetchIncomeDateRng`, _requestData,config)
+            .post(`http://192.168.1.3/testAPI/api/Chat/fetchIncomeDateRng`, _requestData,config)
             .then((res) => {
                console.log('response',res.data)
                setData(res.data)
@@ -255,7 +255,7 @@ const AccountsAdmin = () => {
    console.log(_requestData)
     {
        axios
-            .post(`http://192.168.1.9/testAPI/api/Chat/fetchOutgoingDateRng`, _requestData,config)
+            .post(`http://192.168.1.3/testAPI/api/Chat/fetchOutgoingDateRng`, _requestData,config)
             .then((res) => {
                console.log('response',res.data)
                setData(res.data)
@@ -279,7 +279,7 @@ const AccountsAdmin = () => {
             })
     }
   };
-   
+ 
     return(
     <>
    <button type="button" value="Income" class="btn btn-info btn-sm, btn1" data-toggle="modal" data-target="#incomeModal">Income</button>
@@ -475,13 +475,15 @@ const AccountsAdmin = () => {
   </table>
   <div>
   <label>Total Amount Paid</label>
-        <input name="total" value={parseFloat(data.amountPaid)+parseFloat(data.id)} placeholder='Total amount' class="acc-gst-tot" readOnly/>
+        <input name="total" value={employeeDetails.amountPaid} placeholder='Total amount' class="acc-gst-tot" readOnly/>
         </div>
         </div>
   <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Close</button>
+  </div>
+  </div>
         </div>
-        </div>
-        </div>
+        {/* </div>
+        </div> */}
 
 
 {/* -----------------------------------------------OUTGOING TABLE--------------------------------------------------------- */}
