@@ -3,7 +3,6 @@ import axios from "axios";
 import {useNavigate} from 'react-router-dom';
 
 const AccountsAdmin = () => {
-
     const [formErrors, setFormErrors] = useState({});
 
       const validate = () => {
@@ -139,7 +138,7 @@ const AccountsAdmin = () => {
         };
         {
           Object.keys(_errors).length == 0
-            ? axios.post("http://192.168.1.3/testAPI/api/Chat/postIncomeAcc" ,_requestData, config)
+            ? axios.post("http://192.168.1.11/testAPI/api/Chat/postIncomeAcc" ,_requestData, config)
                 .then((res) => {
                          console.log(res.data)
                          if (res.status === 200) {
@@ -158,7 +157,7 @@ const AccountsAdmin = () => {
 
     const [data,setData] = useState([])
     const initializeEvent = () => {
-    axios.get("http://192.168.1.3/testAPI/api/Chat/fetchIncomeAcc")
+    axios.get("http://192.168.1.11/testAPI/api/Chat/fetchIncomeAcc")
     .then((res) => {
     console.log(res.data);
     setData(res.data)
@@ -176,7 +175,7 @@ const AccountsAdmin = () => {
       };
       {
         Object.keys(_errors).length == 0
-          ? axios.post("http://192.168.1.3/testAPI/api/Chat/postOutgoAcc" ,_requestData, config)
+          ? axios.post("http://192.168.1.11/testAPI/api/Chat/postOutgoAcc" ,_requestData, config)
               .then((res) => {
                        console.log(res.data)
                        if (res.status === 200) {
@@ -194,7 +193,7 @@ const AccountsAdmin = () => {
 
 
   const outgoing = () => {
-  axios.get("http://192.168.1.3/testAPI/api/Chat/fetchOutgoAcc")
+  axios.get("http://192.168.1.11/testAPI/api/Chat/fetchOutgoAcc")
   .then((res) => {
   console.log(res.data);
   setData(res.data)
@@ -202,7 +201,7 @@ const AccountsAdmin = () => {
   };
  
   const fetchAcc = () => {
-    axios.get("http://192.168.1.3/testAPI/api/Chat/fetchAcc")
+    axios.get("http://192.168.1.11/testAPI/api/Chat/fetchAcc")
     .then((res) => {
     console.log(res.data);
     setData(res.data)
@@ -218,7 +217,7 @@ const AccountsAdmin = () => {
    console.log(_requestData)
     {
        axios
-            .post(`http://192.168.1.3/testAPI/api/Chat/fetchIncomeDateRng`, _requestData,config)
+            .post(`http://192.168.1.11/testAPI/api/Chat/fetchIncomeDateRng`, _requestData,config)
             .then((res) => {
                console.log('response',res.data)
                setData(res.data)
@@ -245,6 +244,12 @@ const AccountsAdmin = () => {
   };
 
 
+const [amountPaid, setamountPaid] = useState();
+const ab = (id) =>{
+  console.log('getdata',id)
+  setamountPaid(id.amountPaid)
+}
+console.log('eeditsdata',employeeDetails)
   //--------------------------------------------FETCH OUTGOING BY DATE RANGE---------------------------------------------------//
   const outgoingDateRng = () => {
    
@@ -255,7 +260,7 @@ const AccountsAdmin = () => {
    console.log(_requestData)
     {
        axios
-            .post(`http://192.168.1.3/testAPI/api/Chat/fetchOutgoingDateRng`, _requestData,config)
+            .post(`http://192.168.1.11/testAPI/api/Chat/fetchOutgoingDateRng`, _requestData,config)
             .then((res) => {
                console.log('response',res.data)
                setData(res.data)
@@ -279,17 +284,33 @@ const AccountsAdmin = () => {
             })
     }
   };
- 
-    return(
+
+  let total = 0 ; //for calculating total row's amount set total = 0;
+ let a;
+  return(
     <>
    <button type="button" value="Income" class="btn btn-info btn-sm, btn1" data-toggle="modal" data-target="#incomeModal">Income</button>
    <button type="button" value="Outgoing" class="btn btn-info btn-sm, btn1" data-toggle="modal" data-target="#outgoingModal">Outgoing</button>
-   <button type="button" value="GST" class="btn btn-info btn-sm, btn1" data-toggle="modal" data-target="#incomeModal">GST</button>
+   <button type="button" value="GST" class="btn btn-info btn-sm, btn1" data-toggle="modal" data-target="#gstModal">GST</button>
    <button type="button" value="Total" class="btn btn-info btn-sm, btn1" data-toggle="modal" data-target="#incomeModal">Total</button>
    <button type="button" value="P&L" class="btn btn-info btn-sm, btn1" data-toggle="modal" data-target="#plModal" onClick={fetchAcc}>P&L</button>
-   <button type="button" value="Invoice" class="btn btn-info btn-sm, btn1" data-toggle="modal" data-target="#inModal">Invoice</button>
+   <button type="button" value="Invoice" class="btn btn-info btn-sm, btn1" data-toggle="modal" data-target="#invoiceModal">Invoice</button>
    <button type="button" value="ViewAcc" class="btn btn-info btn-sm, btn1" data-toggle="modal" data-target="#viewModal">View Account</button>
    
+
+
+{/* --------------------------------------------INVOICE BUTTON--------------------------------------------  */}
+   <div class="modal fade" id="invoiceModal" role="dialog">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+        <button type="button" value="ViewAccIncome" class="btn btn-info btn-sm, btn1" data-toggle="modal" data-target="#viewIncome" onClick={initializeEvent}>Income Invoice</button>
+        <button type="button" value="ViewAccOutgoing" class="btn btn-info btn-sm, btn1" data-toggle="modal" data-target="#viewOutgoing" onClick={outgoing}>Outgoing Invoice</button>
+        </div>
+        </div>
+        </div>
+        </div>
+
 
   {/* --------------------------------------------VIEW TABLES BUTTON--------------------------------------------  */}
    <div class="modal fade" id="viewModal" role="dialog">
@@ -469,14 +490,14 @@ const AccountsAdmin = () => {
                       <td id='color'>{data.paymentModeBy}</td>
                       <td id='color'>{data.paymentRecievedBy}</td>
                       <td id='color'>{data.amountPaid}</td>
+                      <p id='zz'>{total = parseInt(data.amountPaid) + parseInt(total)}</p>
+                      <p>{total}</p>
                   </tr>))
-      } 
+                  
+                  
+     } 
   </tbody>
   </table>
-  <div>
-  <label>Total Amount Paid</label>
-        <input name="total" value={employeeDetails.amountPaid} placeholder='Total amount' class="acc-gst-tot" readOnly/>
-        </div>
         </div>
   <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Close</button>
   </div>
@@ -508,6 +529,7 @@ const AccountsAdmin = () => {
           <th id='color'>Narration-No</th>
           <th id='color'>Type of payment</th>
           <th id='color'>Support-Documents</th>
+          <th id='color'>Update of payment</th>
       </tr>
   </thead>
   <tbody>
@@ -524,6 +546,7 @@ const AccountsAdmin = () => {
                       <td id='color'>{data.narration}</td>
                       <td id='color'>{data.typeOfPay}</td>
                       <td id='color'>{data.supportDoc}</td>
+                      <td id='color'>{data.updateOfPaid}</td>
                   </tr>))
       } 
   </tbody>
@@ -558,6 +581,7 @@ const AccountsAdmin = () => {
           <th id='color'>Narration-No</th>
           <th id='color'>Support-Documents</th>
           <th id='color'>Date</th>
+          <th id='color'>Update of payment</th>
       </tr>
   </thead>
   <tbody>
@@ -574,6 +598,7 @@ const AccountsAdmin = () => {
                       <td id='color'>{data.narration}</td>
                       <td id='color'>{data.supportDoc}</td>
                       <td id='color'>{data.date}</td>
+                      <td id='color'> <p type='submite' onClick={()=>outgoingDateRng(data)}></p>{data.updateOfPaid}</td>
                   </tr>))
       } 
   </tbody>
