@@ -75,6 +75,7 @@ const AccountsAdmin = () => {
         supportDocOut: "", //for outhoing
         date: "",
         toDate: "",
+        id_income: "",
     });
     
       const resetEmployeeDetails = () => {
@@ -92,6 +93,7 @@ const AccountsAdmin = () => {
         supportDocOut: "", //for outgoing
         date: "",
         toDate: "",
+        id_income: "",
         };
         setEmployeeDetails(_resetEmployee);
     };
@@ -138,7 +140,7 @@ const AccountsAdmin = () => {
         };
         {
           Object.keys(_errors).length == 0
-            ? axios.post("http://192.168.1.11/testAPI/api/Chat/postIncomeAcc" ,_requestData, config)
+            ? axios.post("http://192.168.1.9/testAPI/api/Chat/postIncomeAcc" ,_requestData, config)
                 .then((res) => {
                          console.log(res.data)
                          if (res.status === 200) {
@@ -157,14 +159,14 @@ const AccountsAdmin = () => {
 
     const [data,setData] = useState([])
     const initializeEvent = () => {
-    axios.get("http://192.168.1.11/testAPI/api/Chat/fetchIncomeAcc")
+    axios.get("http://192.168.1.9/testAPI/api/Chat/fetchIncomeAcc")
     .then((res) => {
-    console.log(res.data);
+    console.log({state:res.data});
     setData(res.data)
     })
     };
-   // useEffect(() => initializeEvent(), []);
-
+   
+  
     //------------------------------------------OUTGOING------------------------------------------//
     const submitOutdata = () => {
       const _errors = validate();
@@ -175,13 +177,12 @@ const AccountsAdmin = () => {
       };
       {
         Object.keys(_errors).length == 0
-          ? axios.post("http://192.168.1.11/testAPI/api/Chat/postOutgoAcc" ,_requestData, config)
+          ? axios.post("http://192.168.1.9/testAPI/api/Chat/postOutgoAcc" ,_requestData, config)
               .then((res) => {
                        console.log(res.data)
                        if (res.status === 200) {
                        alert("Successfully registred");
                        } setFormErrors({});
-                       //console.log("/leadMngTable",{dataMng:res.data})
                        })
               .catch((err) =>{ alert("Something went wrong")
               resetEmployeeDetails();
@@ -193,7 +194,7 @@ const AccountsAdmin = () => {
 
 
   const outgoing = () => {
-  axios.get("http://192.168.1.11/testAPI/api/Chat/fetchOutgoAcc")
+  axios.get("http://192.168.1.9/testAPI/api/Chat/fetchOutgoAcc")
   .then((res) => {
   console.log(res.data);
   setData(res.data)
@@ -201,9 +202,9 @@ const AccountsAdmin = () => {
   };
  
   const fetchAcc = () => {
-    axios.get("http://192.168.1.11/testAPI/api/Chat/fetchAcc")
+    axios.get("http://192.168.1.9/testAPI/api/Chat/fetchAcc")
     .then((res) => {
-    console.log(res.data);
+    console.log(data);
     setData(res.data)
     })
     };
@@ -217,7 +218,7 @@ const AccountsAdmin = () => {
    console.log(_requestData)
     {
        axios
-            .post(`http://192.168.1.11/testAPI/api/Chat/fetchIncomeDateRng`, _requestData,config)
+            .post(`http://192.168.1.9/testAPI/api/Chat/fetchIncomeDateRng`, _requestData,config)
             .then((res) => {
                console.log('response',res.data)
                setData(res.data)
@@ -244,12 +245,6 @@ const AccountsAdmin = () => {
   };
 
 
-const [amountPaid, setamountPaid] = useState();
-const ab = (id) =>{
-  console.log('getdata',id)
-  setamountPaid(id.amountPaid)
-}
-console.log('eeditsdata',employeeDetails)
   //--------------------------------------------FETCH OUTGOING BY DATE RANGE---------------------------------------------------//
   const outgoingDateRng = () => {
    
@@ -260,7 +255,7 @@ console.log('eeditsdata',employeeDetails)
    console.log(_requestData)
     {
        axios
-            .post(`http://192.168.1.11/testAPI/api/Chat/fetchOutgoingDateRng`, _requestData,config)
+            .post(`http://192.168.1.9/testAPI/api/Chat/fetchOutgoingDateRng`, _requestData,config)
             .then((res) => {
                console.log('response',res.data)
                setData(res.data)
@@ -286,7 +281,7 @@ console.log('eeditsdata',employeeDetails)
   };
 
   let total = 0 ; //for calculating total row's amount set total = 0;
- let a;
+ 
   return(
     <>
    <button type="button" value="Income" class="btn btn-info btn-sm, btn1" data-toggle="modal" data-target="#incomeModal">Income</button>
@@ -489,23 +484,20 @@ console.log('eeditsdata',employeeDetails)
                       <td id='color'>{data.incomeSRC}</td>
                       <td id='color'>{data.paymentModeBy}</td>
                       <td id='color'>{data.paymentRecievedBy}</td>
-                      <td id='color'>{data.amountPaid}</td>
-                      <p id='zz'>{total = parseInt(data.amountPaid) + parseInt(total)}</p>
-                      <p>{total}</p>
-                  </tr>))
-                  
-                  
-     } 
+                      <td id='color'>{data.amountPaid}<p id='zz'>{total = parseInt(data.amountPaid) + parseInt(total)}</p></td> 
+                  </tr>))           
+       }  
   </tbody>
   </table>
-        </div>
+  <div class="modal-footer" id='foot'>
+  <p><strong id='ff'>Total:</strong>{total}</p>
+  </div>
   <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Close</button>
   </div>
   </div>
-        </div>
-        {/* </div>
-        </div> */}
-
+  </div>
+  </div>
+       
 
 {/* -----------------------------------------------OUTGOING TABLE--------------------------------------------------------- */}
         <div class="modal fade" id="viewOutgoing" role="dialog">
@@ -581,7 +573,6 @@ console.log('eeditsdata',employeeDetails)
           <th id='color'>Narration-No</th>
           <th id='color'>Support-Documents</th>
           <th id='color'>Date</th>
-          <th id='color'>Update of payment</th>
       </tr>
   </thead>
   <tbody>
@@ -598,7 +589,6 @@ console.log('eeditsdata',employeeDetails)
                       <td id='color'>{data.narration}</td>
                       <td id='color'>{data.supportDoc}</td>
                       <td id='color'>{data.date}</td>
-                      <td id='color'> <p type='submite' onClick={()=>outgoingDateRng(data)}></p>{data.updateOfPaid}</td>
                   </tr>))
       } 
   </tbody>
