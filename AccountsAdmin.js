@@ -93,7 +93,7 @@ const AccountsAdmin = () => {
         supportDocOut: "", //for outgoing
         date: "",
         toDate: "",
-        id_income: "",
+       // id_income: "",
         };
         setEmployeeDetails(_resetEmployee);
     };
@@ -132,29 +132,28 @@ const AccountsAdmin = () => {
     };
     
     const submitdata = () => {
-        const _errors = validate();
-        setFormErrors(_errors);
-    
-        let _requestData = {
-          ...employeeDetails,
-        };
-        {
-          Object.keys(_errors).length == 0
-            ? axios.post("http://192.168.1.9/testAPI/api/Chat/postIncomeAcc" ,_requestData, config)
-                .then((res) => {
-                         console.log(res.data)
-                         if (res.status === 200) {
-                         alert("Successfully registred");
-                         } setFormErrors({});
-                         //console.log("/leadMngTable",{dataMng:res.data})
-                         })
-                .catch((err) =>{ alert("Something went wrong")
-                resetEmployeeDetails();
-                setFormErrors({});
-              })
-            : alert("Please Fill All Details");
-        }
-    };
+      const _errors = validate();
+      setFormErrors(_errors);
+  
+      let _requestData = {
+        ...employeeDetails,
+      };
+      {
+        Object.keys(_errors).length == 0
+          ? axios.post("http://192.168.1.9/testAPI/api/Chat/postIncomeAcc" ,_requestData, config)
+              .then((res) => {
+                       console.log(res.data)
+                       if (res.status === 200) {
+                       alert("Successfully registred");
+                       } setFormErrors({});
+                       })
+              .catch((err) =>{ alert("Something went wrong")
+              resetEmployeeDetails();
+              setFormErrors({});
+            })
+          : alert("Please Fill All Details");
+      }
+  };
 
 
     const [data,setData] = useState([])
@@ -279,6 +278,24 @@ const AccountsAdmin = () => {
             })
     }
   };
+
+  const handleEdit = (item) => {
+     console.log(item)
+      navigate("/invoice", {
+        state: {item
+        },
+      });
+   };
+
+
+   const handleEditOut = (item) => {
+    console.log(item)
+     navigate("/outgoing", {
+       state: {item
+       },
+     });
+  };
+
 
   let total = 0 ; //for calculating total row's amount set total = 0;
  
@@ -512,33 +529,37 @@ const AccountsAdmin = () => {
   <thead>
       <tr>
           <th id='color'>Income Source</th>
+          <th id='color'>Date</th>
+          <th id='color'>Time</th>
           <th id='color'>Payment-mode by</th>
-          <th id='color'>Amount paid</th>
           <th id='color'>Payment-recieved</th>
-          <th id='color'>Type of GST</th>
+          <th id='color'>Amount paid</th>
+          <th id='color'>GST</th>
           <th id='color'>GST total amont</th>
           <th id='color'>Payment-mode</th>
           <th id='color'>Narration-No</th>
           <th id='color'>Type of payment</th>
           <th id='color'>Support-Documents</th>
-          <th id='color'>Update of payment</th>
+          
       </tr>
   </thead>
   <tbody>
        {
           data.map(data => (
                   <tr key={data.id}>
+                    <td id='color'> <button type="button" value="ViewAccOutgoing" class="btn btn-info btn-sm, btn1" data-toggle="modal" data-target="#invoiceOutgoingModal" onClick={() => handleEditOut(data)}>View</button></td>
                       <td id='color'>{data.incomeSRC}</td>
+                      <td id='color'>{data.date}</td>
+                      <td id='color'>{data.time}</td>
                       <td id='color'>{data.paymentModeBy}</td>
-                      <td id='color'>{data.amountPaid}</td>
                       <td id='color'>{data.paymentRecievedBy}</td>
+                      <td id='color'>{data.amountPaid}</td>
                       <td id='color'>{data.gstCal}</td>
                       <td id='color'>{data.gstAmount}</td>
                       <td id='color'>{data.paymentMode}</td>
                       <td id='color'>{data.narration}</td>
                       <td id='color'>{data.typeOfPay}</td>
                       <td id='color'>{data.supportDoc}</td>
-                      <td id='color'>{data.updateOfPaid}</td>
                   </tr>))
       } 
   </tbody>
@@ -563,32 +584,36 @@ const AccountsAdmin = () => {
   <table class='table table-bordered'>
   <thead>
       <tr>
+          <th id='color'>Action</th>
           <th id='color'>Income Source</th>
+          <th id='color'>Date</th>
+          <th id='color'>Time</th>
           <th id='color'>Payment-mode by</th>
-          <th id='color'>Amount paid</th>
           <th id='color'>Payment-recieved</th>
-          <th id='color'>Type of GST</th>
+          <th id='color'>Amount paid</th>
+          <th id='color'>GST</th>
           <th id='color'>GST total amont</th>
           <th id='color'>Payment-mode</th>
           <th id='color'>Narration-No</th>
           <th id='color'>Support-Documents</th>
-          <th id='color'>Date</th>
       </tr>
   </thead>
   <tbody>
        {
           data.map(data => (
                   <tr key={data.id}>
+                    <td id='color'> <button type="button" value="ViewAccOutgoing" class="btn btn-info btn-sm, btn1" data-toggle="modal" data-target="#invoiceIncomeModal" onClick={() => handleEdit(data)}>View</button></td>
                       <td id='color'>{data.incomeSRC}</td>
+                      <td id='color'>{data.date}</td>
+                      <td id='color'>{data.time}</td>
                       <td id='color'>{data.paymentModeBy}</td>
-                      <td id='color'>{data.amountPaid}</td>
                       <td id='color'>{data.paymentRecievedBy}</td>
+                      <td id='color'>{data.amountPaid}</td>
                       <td id='color'>{data.gstCal}</td>
                       <td id='color'>{data.gstAmount}</td>
                       <td id='color'>{data.paymentMode}</td>
                       <td id='color'>{data.narration}</td>
                       <td id='color'>{data.supportDoc}</td>
-                      <td id='color'>{data.date}</td>
                   </tr>))
       } 
   </tbody>
