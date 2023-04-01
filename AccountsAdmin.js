@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import axios from "axios";
 import {useNavigate} from 'react-router-dom';
+import ReactHTMLTableToExcel from "react-html-table-to-excel";
 
 const AccountsAdmin = () => {
     const [formErrors, setFormErrors] = useState({});
@@ -60,7 +61,7 @@ const AccountsAdmin = () => {
     };
     const [date,setDate] = useState([])
     const [toDate,settoData] = useState([])
-      const [file, setFile] = useState();
+     // const [file, setFile] = useState();
       const [employeeDetails, setEmployeeDetails] = useState({
         incomeSRC: "",
         paymentModeBy: "",
@@ -107,7 +108,7 @@ const AccountsAdmin = () => {
         setEmployeeDetails(_currentData);
         const _errors = validateOnChange(e.target.name, e.target.value);
           //console.log(e.target.files);
-          setFile(URL.createObjectURL(e.target.files[0]));
+          //setFile(URL.createObjectURL(e.target.files[0]));
     
         if (Object.keys(_errors).length != 0) {
           let finalErrors = {
@@ -140,7 +141,7 @@ const AccountsAdmin = () => {
       };
       {
         Object.keys(_errors).length == 0
-          ? axios.post("http://192.168.1.9/testAPI/api/Chat/postIncomeAcc" ,_requestData, config)
+          ? axios.post("http://192.168.1.7/testAPI/api/Chat/postIncomeAcc" ,_requestData, config)
               .then((res) => {
                        console.log(res.data)
                        if (res.status === 200) {
@@ -155,10 +156,9 @@ const AccountsAdmin = () => {
       }
   };
 
-
     const [data,setData] = useState([])
     const initializeEvent = () => {
-    axios.get("http://192.168.1.9/testAPI/api/Chat/fetchIncomeAcc")
+    axios.get("http://192.168.1.7/testAPI/api/Chat/fetchIncomeAcc")
     .then((res) => {
     console.log({state:res.data});
     setData(res.data)
@@ -176,7 +176,7 @@ const AccountsAdmin = () => {
       };
       {
         Object.keys(_errors).length == 0
-          ? axios.post("http://192.168.1.9/testAPI/api/Chat/postOutgoAcc" ,_requestData, config)
+          ? axios.post("http://192.168.1.7/testAPI/api/Chat/postOutgoAcc" ,_requestData, config)
               .then((res) => {
                        console.log(res.data)
                        if (res.status === 200) {
@@ -191,9 +191,8 @@ const AccountsAdmin = () => {
       }
   };
 
-
   const outgoing = () => {
-  axios.get("http://192.168.1.9/testAPI/api/Chat/fetchOutgoAcc")
+  axios.get("http://192.168.1.7/testAPI/api/Chat/fetchOutgoAcc")
   .then((res) => {
   console.log(res.data);
   setData(res.data)
@@ -201,12 +200,20 @@ const AccountsAdmin = () => {
   };
  
   const fetchAcc = () => {
-    axios.get("http://192.168.1.9/testAPI/api/Chat/fetchAcc")
-    .then((res) => {
-    console.log(data);
-    setData(res.data)
-    })
-    };
+  axios.get("http://192.168.1.7/testAPI/api/Chat/fetchAcc")
+  .then((res) => {
+  console.log(data);
+  setData(res.data)
+  })
+  };
+
+  const dummy = () => {
+  axios.get("http://192.168.1.7/testAPI/api/Chat/twoTable")
+  .then((res) => {
+  console.log(res.data);
+  setData(res.data)
+  })
+  };
 //--------------------------------------------FETCH INCOME BY DATE RANGE---------------------------------------------------//
   const incomeDateRng = () => {
    
@@ -217,7 +224,7 @@ const AccountsAdmin = () => {
    console.log(_requestData)
     {
        axios
-            .post(`http://192.168.1.9/testAPI/api/Chat/fetchIncomeDateRng`, _requestData,config)
+            .post(`http://192.168.1.7/testAPI/api/Chat/fetchIncomeDateRng`, _requestData,config)
             .then((res) => {
                console.log('response',res.data)
                setData(res.data)
@@ -254,7 +261,7 @@ const AccountsAdmin = () => {
    console.log(_requestData)
     {
        axios
-            .post(`http://192.168.1.9/testAPI/api/Chat/fetchOutgoingDateRng`, _requestData,config)
+            .post(`http://192.168.1.7/testAPI/api/Chat/fetchOutgoingDateRng`, _requestData,config)
             .then((res) => {
                console.log('response',res.data)
                setData(res.data)
@@ -298,13 +305,45 @@ const AccountsAdmin = () => {
 
 
   let total = 0 ; //for calculating total row's amount set total = 0;
+
+  
+  ReactHTMLTableToExcel.format = (s, c) => {
+    if (c && c['table']) {
+    const html = c.table;
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    const rows = doc.querySelectorAll('tr');
+    
+    for (const row of rows) row.removeChild(row.firstChild);
+    
+    c.table = doc.querySelector('table').outerHTML;
+    }
+    
+    return s.replace(/{(\w+)}/g, (m, p) => c[p]);
+    };
+
+    // ReactHTMLTableToPdf.format = (s, c) => {
+    //   if (c && c['table']) {
+    //   const html = c.table;
+    //   const parser = new DOMParser();
+    //   const doc = parser.parseFromString(html, 'text/html');
+    //   const rows = doc.querySelectorAll('tr');
+      
+    //   for (const row of rows) row.removeChild(row.firstChild);
+      
+    //   c.table = doc.querySelector('table').outerHTML;
+    //   }
+      
+    //   return s.replace(/{(\w+)}/g, (m, p) => c[p]);
+    //   };
+    
  
   return(
-    <>
+  <>
    <button type="button" value="Income" class="btn btn-info btn-sm, btn1" data-toggle="modal" data-target="#incomeModal">Income</button>
    <button type="button" value="Outgoing" class="btn btn-info btn-sm, btn1" data-toggle="modal" data-target="#outgoingModal">Outgoing</button>
    <button type="button" value="GST" class="btn btn-info btn-sm, btn1" data-toggle="modal" data-target="#gstModal">GST</button>
-   <button type="button" value="Total" class="btn btn-info btn-sm, btn1" data-toggle="modal" data-target="#incomeModal">Total</button>
+   <button type="button" value="Total" class="btn btn-info btn-sm, btn1" data-toggle="modal" data-target="">Total</button>
    <button type="button" value="P&L" class="btn btn-info btn-sm, btn1" data-toggle="modal" data-target="#plModal" onClick={fetchAcc}>P&L</button>
    <button type="button" value="Invoice" class="btn btn-info btn-sm, btn1" data-toggle="modal" data-target="#invoiceModal">Invoice</button>
    <button type="button" value="ViewAcc" class="btn btn-info btn-sm, btn1" data-toggle="modal" data-target="#viewModal">View Account</button>
@@ -316,64 +355,85 @@ const AccountsAdmin = () => {
     <div class="modal-dialog modal-sm">
       <div class="modal-content">
         <div class="modal-header">
-        <button type="button" value="ViewAccIncome" class="btn btn-info btn-sm, btn1" data-toggle="modal" data-target="#viewIncome" onClick={initializeEvent}>Income Invoice</button>
-        <button type="button" value="ViewAccOutgoing" class="btn btn-info btn-sm, btn1" data-toggle="modal" data-target="#viewOutgoing" onClick={outgoing}>Outgoing Invoice</button>
+        <button type="button" value="ViewAccIncome" class="btn btn-info btn-sm, btn4" data-toggle="modal" data-target="#demoModal" onClick={initializeEvent}>Income Invoice</button>
+        <button type="button" value="ViewAccOutgoing" class="btn btn-info btn-sm, btn4" data-toggle="modal" data-target="#demoModal" onClick={outgoing}>Outgoing Invoice</button>
         </div>
         </div>
         </div>
         </div>
 
 
-  {/* --------------------------------------------VIEW TABLES BUTTON--------------------------------------------  */}
+{/* --------------------------------------------VIEW TABLES BUTTON--------------------------------------------  */}
    <div class="modal fade" id="viewModal" role="dialog">
     <div class="modal-dialog modal-sm">
       <div class="modal-content">
         <div class="modal-header">
-        <button type="button" value="ViewAccIncome" class="btn btn-info btn-sm, btn1" data-toggle="modal" data-target="#viewIncome" onClick={initializeEvent}>View Income</button>
-        <button type="button" value="ViewAccOutgoing" class="btn btn-info btn-sm, btn1" data-toggle="modal" data-target="#viewOutgoing" onClick={outgoing}>View Outgoing</button>
+        <button type="button" value="ViewAccIncome" class="btn btn-info btn-sm, btn4" data-toggle="modal" data-target="#viewIncome" onClick={initializeEvent}>View Income</button>
+        <button type="button" value="ViewAccOutgoing" class="btn btn-info btn-sm, btn4" data-toggle="modal" data-target="#viewOutgoing" onClick={outgoing}>View Outgoing</button>
+        <button type="button" value="ViewAccDummy" class="btn btn-info btn-sm, btn4" data-toggle="modal" data-target="#dummyOutgoing" onClick={dummy}>View Dummy</button>
         </div>
         </div>
         </div>
         </div>
    
-   
+{/*--------------------------------------------demo------------------------------------------ */}
+    <div class="modal fade" id="demoModal" role="dialog">
+    <div class="modal-dialog modal-mi">
+      <div class="modal-content">
+        <div class="modal-header1">
+        <div class="modal-body">
+          <div>handle ChangeInput</div>
+          <div>handle ChangeInput</div>
+          <div>handleChangeInputhi</div>
+          <div>handleChangeInput</div>
+          <div>handleChangeInput</div>
+          </div>
+        </div>
+        </div>
+      </div>
+      </div>
+        
   {/* ----------------------------------------------INCOME FORM-------------------------------------------- */}
    <div class="modal fade" id="incomeModal" role="dialog">
-    <div class="modal-dialog modal-sm">
+    <div class="modal-dialog modal-mi">
       <div class="modal-content">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal">&times;</button>
           <h4 class="modal-title">Income</h4>
         </div>
         <div class="modal-body">
-        <div className='input-container1'>
+        <div>
 
         <label>Income Source</label>
-        <input type="text" name="incomeSRC" value={employeeDetails.incomeSRC} placeholder='Income source' onChange={handleChangeInput} error="!employeeDetails.incomeSRC"/>
+        <input id='is' type="text" name="incomeSRCIN" value={employeeDetails.incomeSRCIN} placeholder='Income source' onChange={handleChangeInput} error="!employeeDetails.incomeSRCIN"/>
         
         <label>Payment-mode by*</label>
-        <input type="text" name="paymentModeBy" value={employeeDetails.paymentModeBy} placeholder='Payment-mode by' onChange={handleChangeInput} error="!employeeDetails.paymentModeBy" required/>
+        <input id='is' type="text" name="paymentModeByIN" value={employeeDetails.paymentModeByIN} placeholder='Payment-mode by' onChange={handleChangeInput} error="!employeeDetails.paymentModeByIN" required/>
        
         <label>Amount paid*</label>
-        <input type="text" name="amountPaid" value={employeeDetails.amountPaid} placeholder='Payment-mode by' onChange={handleChangeInput} error="!employeeDetails.amountPaid" required/>
-        
+        <input id='amtpayIN' type="text" name="amountPaidIN" value={employeeDetails.amountPaidIN} placeholder='Amount-paid' onChange={handleChangeInput} error="!employeeDetails.amountPaidIN" required/>
+
+        <div id='payrcv'>
         <label>Payment-recieved*</label>
-        <input type="text" name="paymentRecievedBy" value={employeeDetails.paymentRecievedBy} placeholder='Payment-mode by' onChange={handleChangeInput} error="!employeeDetails.paymentRecievedBy" required/>
-        
+        <input id='prIN' type="text" name="paymentRecievedByIN" value={employeeDetails.paymentRecievedByIN} placeholder='Payment-recieved by' onChange={handleChangeInput} error="!employeeDetails.paymentRecievedByIN" required/>
+        </div>
+
         <label>Type Of GST*</label>
-        <select name="gstCal" value={employeeDetails.gstCal} onChange={handleChangeInput} error="!employeeDetails.gstCal" required>
-        <option value="" size={10}>Select</option><br />
+        <select id='typeGst' name="gstCalIN" value={employeeDetails.gstCalIN} onChange={handleChangeInput} error="!employeeDetails.gstCalIN" required>
+        <option value="" size={10}>Select</option><br/>
         <option value="9">CGST</option>
         <option value="8">SGST</option>
         <option value="">Other</option>
         </select>
-
+             
+        <div id='gstAmt'>
         <label>GST Total Amount</label>
-        <input name="gstAmount" value={(employeeDetails.gstAmount)=((employeeDetails.gstCal)*(employeeDetails.amountPaid))/(100)} placeholder='Total amount' class="acc-gst-tot" readOnly/>
+        <input id='gta' name="gstAmount" value={(employeeDetails.gstAmountIN)=((employeeDetails.gstCalIN)*(employeeDetails.amountPaidIN))/(100)}  placeholder='Total amount' readOnly/>
+        </div>
 
         <label>Payment-mode*</label>
-        <select name="paymentMode" value={employeeDetails.paymentMode} placeholder='Payment-mode by' onChange={handleChangeInput} error="!employeeDetails.paymentMode" required>
-        <option value="" size={10}>Select</option><br />
+        <select id='pm' name="paymentModeIN" value={employeeDetails.paymentModeIN} placeholder='Payment-mode' onChange={handleChangeInput} error="!employeeDetails.paymentModeIN" required>
+        <option value="" size={10}>Select</option><br/>
         <option value="Cash">Cash</option>
         <option value="Cheque">Cheque</option>
         <option value="NEFT">NEFT</option>
@@ -381,17 +441,21 @@ const AccountsAdmin = () => {
         <option value="Other">Other</option>
         </select>
 
+        <div id='narr'>
         <label>Narration-No.</label>
-        <input type="text" name="narration" value={employeeDetails.narration} onChange={handleChangeInput} error="!employeeDetails.narration" placeholder='Cheque/UTR number'/>
-        
+        <input id='nn' type="text" name="narrationIN" value={employeeDetails.narrationIN} onChange={handleChangeInput} error="!employeeDetails.narrationIN" placeholder='Cheque/UTR number'/>
+        </div>
+
+        <div>
         <label>Support-Documents</label>
-        <input type="file" name="supportDoc"  value={employeeDetails.supportDoc}onChange={handleChangeInput} error="!employeeDetails.supportDoc" placeholder='Support-Doc' class="accfile"/> 
-        
+        <input id='sd' type="file" name="supportDocIN" value={employeeDetails.supportDocIN} onChange={handleChangeInput} error="!employeeDetails.supportDocIN" placeholder='Support-Doc'/> 
+        </div>  
+
         </div>
         </div>
-        <div class="modal-footer">
-        <button type="button" class="btn btn-info btn-sm" data-dismiss="modal" onClick={submitdata}>Submit</button>
-        <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Close</button>
+        <div class="modal-footer" id='ft'>
+        <button id='modcl' type="button" class="btn btn-info btn-sm" data-dismiss="modal" onClick={submitdata}>Submit</button>
+        <button id='modcal1' type="button" class="btn btn-default btn-sm" data-dismiss="modal">Close</button>
         </div>
       </div>
     </div>
@@ -399,41 +463,46 @@ const AccountsAdmin = () => {
 
 
 {/* ------------------------------------------------OUTGOING FORM-------------------------------------------- */}
+
   <div class="modal fade" id="outgoingModal" role="dialog">
-    <div class="modal-dialog modal-sm">
+    <div class="modal-dialog modal-mi">
       <div class="modal-content">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal">&times;</button>
           <h4 class="modal-title">Outgoing</h4>
         </div>
         <div class="modal-body">
-        <div className='input-container1'>
+        <div>
 
         <label>Income Source</label>
-        <input type="text" name="incomeSRC" value={employeeDetails.incomeSRC} placeholder='Income source' onChange={handleChangeInput} error="!employeeDetails.incomeSRC"/>
+        <input id='is' type="text" name="incomeSRC" value={employeeDetails.incomeSRC} placeholder='Income source' onChange={handleChangeInput} error="!employeeDetails.incomeSRC"/>
         
         <label>Payment-mode by*</label>
-        <input type="text" name="paymentModeBy" value={employeeDetails.paymentModeBy} placeholder='Payment-mode by' onChange={handleChangeInput} error="!employeeDetails.paymentModeBy" required/>
+        <input id='is' type="text" name="paymentModeBy" value={employeeDetails.paymentModeBy} placeholder='Payment-mode by' onChange={handleChangeInput} error="!employeeDetails.paymentModeBy" required/>
        
         <label>Amount paid*</label>
-        <input type="text" name="amountPaid" value={employeeDetails.amountPaid} placeholder='Payment-mode by' onChange={handleChangeInput} error="!employeeDetails.amountPaid" required/>
+        <input id='amtpay' type="text" name="amountPaid" value={employeeDetails.amountPaid} placeholder='Amount paid' onChange={handleChangeInput} error="!employeeDetails.amountPaid" required/>
         
+        <div id='payrcv'>
         <label>Payment-recieved*</label>
-        <input type="text" name="paymentRecievedBy" value={employeeDetails.paymentRecievedBy} placeholder='Payment-mode by' onChange={handleChangeInput} error="!employeeDetails.paymentRecievedBy" required/>
-        
+        <input id='pr' type="text" name="paymentRecievedBy" value={employeeDetails.paymentRecievedBy} placeholder='Payment-recieved by' onChange={handleChangeInput} error="!employeeDetails.paymentRecievedBy" required/>
+        </div>
+
         <label>Type Of GST*</label>
-        <select name="gstCal" value={employeeDetails.gstCal} onChange={handleChangeInput} error="!employeeDetails.gstCal" required>
+        <select id='typeGst' name="gstCal" value={employeeDetails.gstCal} onChange={handleChangeInput} error="!employeeDetails.gstCal" required>
         <option value="" size={10}>Select</option><br />
         <option value="9">CGST</option>
         <option value="8">SGST</option>
         <option value="">Other</option>
         </select>
 
+        <div id='gstAmt'>
         <label>GST Total Amount</label>
-        <input name="gstAmount" value={(employeeDetails.gstAmount)=((employeeDetails.gstCal)*(employeeDetails.amountPaid))/(100)}  placeholder='Total amount' class="acc-gst-tot" readOnly/>
+        <input id='gta' name="gstAmount" value={(employeeDetails.gstAmount)=((employeeDetails.gstCal)*(employeeDetails.amountPaid))/(100)}  placeholder='Total amount' readOnly/>
+        </div>
 
         <label>Payment-mode*</label>
-        <select name="paymentMode" value={employeeDetails.paymentMode} placeholder='Payment-mode by' onChange={handleChangeInput} error="!employeeDetails.paymentMode" required>
+        <select id='pm' name="paymentMode" value={employeeDetails.paymentMode} placeholder='Payment-mode' onChange={handleChangeInput} error="!employeeDetails.paymentMode" required>
         <option value="" size={10}>Select</option><br />
         <option value="Cash">Cash</option>
         <option value="Cheque">Cheque</option>
@@ -442,11 +511,13 @@ const AccountsAdmin = () => {
         <option value="Other">Other</option>
         </select>
 
+        <div id='narr'>
         <label>Narration-No.</label>
-        <input type="text" name="narration" value={employeeDetails.narration} class="acc-narr" onChange={handleChangeInput} error="!employeeDetails.narration" placeholder='Cheque/UTR number'/>
-        
+        <input id='nn' type="text" name="narration" value={employeeDetails.narration} onChange={handleChangeInput} error="!employeeDetails.narration" placeholder='Cheque/UTR number'/>
+        </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
         <label>Type of paymnet*</label>
-        <select name="typeOfPay" value={employeeDetails.typeOfPay} class="acc-typ-pay" placeholder='Payment-mode by' onChange={handleChangeInput} error="!employeeDetails.typeOfPay" required>
+        <select id='top' name="typeOfPay" value={employeeDetails.typeOfPay} placeholder='Payment-mode by' onChange={handleChangeInput} error="!employeeDetails.typeOfPay" required>
         <option value="" size={10}>Select</option><br />
         <option value="Cash">Salary</option>
         <option value="Cheque">Housekeep</option>
@@ -456,14 +527,16 @@ const AccountsAdmin = () => {
         <option value="Other">Other</option>
         </select>
 
+        <div>
         <label>Support-Documents</label>
-        <input type="file" name="supportDocOut"  value={employeeDetails.supportDocOut}onChange={handleChangeInput} error="!employeeDetails.supportDocOut" placeholder='Support-Doc' class="accfile"/> 
-        
+        <input id='sd' type="file" name="supportDocOut" value={employeeDetails.supportDocOut}onChange={handleChangeInput} error="!employeeDetails.supportDocOut" placeholder='Support-Doc'/> 
+        </div>
+
         </div>
         </div>
-        <div class="modal-footer">
-        <button type="button" class="btn btn-info btn-sm" data-dismiss="modal" onClick={submitOutdata}>Submit</button>
-        <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Close</button>
+        <div class="modal-footer" id='ft'>
+        <button id='modcl' type="button" class="btn btn-info btn-sm" data-dismiss="modal" onClick={submitOutdata}>Submit</button>
+        <button id='modcal1' type="button" class="btn btn-default btn-sm" data-dismiss="modal">Close</button>
         </div>
       </div>
     </div>
@@ -472,18 +545,22 @@ const AccountsAdmin = () => {
 
 {/* -----------------------------------------------P&L FORM----------------------------------------- */}
   <div class="modal fade" id="plModal" role="dialog">
-    <div class="modal-dialog modal-sm">
+    <div class="modal-dialog modal-mi">
       <div class="modal-content">
         <div class="modal-header">
-          <label>From</label>
-          <input type='date' name='date' value={employeeDetails.date} onChange={handleChangeInput} class='acc-daterng'/>
-          <label>To</label>
-          <input type='date' name='toDate' value={employeeDetails.toDate} onChange={handleChangeInput} class='acc-daterng'/>
-          <button type="button"  class="btn btn-info btn-sm, btn1" data-toggle="modal"  onClick={incomeDateRng}>Income</button>
-          <button type="button"  class="btn btn-info btn-sm, btn1" data-toggle="modal"  onClick={outgoingDateRng}>Outgoing</button>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">P&L</h4>
+        </div>
+        <div class="modal-body">
+          <label id='dtrng'>From</label>
+          <input id='dtrngF' type='date' name='date' value={employeeDetails.date} onChange={handleChangeInput}/>
+          <label id='dtrng'>To</label>
+          <input id='pl' type='date' name='toDate' value={employeeDetails.toDate} onChange={handleChangeInput}/>
+          <button id='pl' type="button" class="btn btn-info btn-sm, btn1" data-toggle="modal" onClick={incomeDateRng}>Income</button>
+          <button id='pl' type="button" class="btn btn-info btn-sm, btn1" data-toggle="modal" onClick={outgoingDateRng}>Outgoing</button>
           <table class='table table-bordered'>
   <thead>
-      <tr>
+      <tr>                                                                                                                                                                                                                   
           <th id='color'>Sl.No</th>
           <th id='color'>Id</th>
           <th id='color'>Invoice</th>
@@ -496,25 +573,82 @@ const AccountsAdmin = () => {
        {
           data.map((data, index) => (
                   <tr key={index}>
-                    <td id='color'>{index+1}</td>
+                      <td id='color'>{index+1}</td>
                       <td id='color'>{data.id}</td>
                       <td id='color'>{data.incomeSRC}</td>
                       <td id='color'>{data.paymentModeBy}</td>
                       <td id='color'>{data.paymentRecievedBy}</td>
                       <td id='color'>{data.amountPaid}<p id='zz'>{total = parseInt(data.amountPaid) + parseInt(total)}</p></td> 
-                  </tr>))           
-       }  
+            </tr>))           
+        }  
   </tbody>
   </table>
+  </div>
   <div class="modal-footer" id='foot'>
   <p><strong id='ff'>Total:</strong>{total}</p>
   </div>
-  <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Close</button>
+  <button id='cl' type="button" class="btn btn-default btn-sm" data-dismiss="modal">Close</button>
+  </div>
+  </div>
+  </div>
+
+{/*--------------------------------------------GST-----------------------------------------------------------*/}
+<div class="modal fade" id="gstModal" role="dialog">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">GST</h4>
+          </div>
+        <div class="modal-body">
+          <label id='dtrng'>From:</label>
+          <input id='dtrngF' type='date' name='date' value={employeeDetails.date} onChange={handleChangeInput}/>
+          <label id='dtrng'>To:</label>
+          <input type='date' name='toDate' value={employeeDetails.toDate} onChange={handleChangeInput}/>
+          <button id='dtrngE' type="button" class="btn btn-info btn-sm, btn2" data-toggle="modal" onClick={incomeDateRng}>Search by date range</button>
+          {/* <button id='dtrngE' type="button" class="btn btn-info btn-sm, btn2" data-toggle="modal" onClick={incomeDateRng}>Excel <i class="fa fa-download"></i></button> */}
+          <ReactHTMLTableToExcel
+          id="test-table-xls-button" className="download-table-xls-button, btn btn-info btn-sm, btn2 fa fa-download"
+          table="exceltable" filename="Employees" sheet="tablexls" buttonText="Excel"/>
+          <button id='dtrngE' type="button" class="btn btn-info btn-sm, btn2" data-toggle="modal" onClick={incomeDateRng}>PDF <i class="fa fa-download"></i></button>
+          <input id='dtrngSe' type='text' placeholder='Search'/><button class="btn btn-info btn-sm, btn3"><i class="fa fa-search"></i></button>
+          {/* <ReactHTMLTableToPdf
+          id="test-table-xls-button" className="download-table-xls-button, btn btn-info btn-sm, btn2 fa fa-download"
+          table="exceltable" filename="Employees" sheet="tablexls" buttonText="PDF"/> */}
+          <table class='table table-bordered' id='exceltable'>
+  <thead>
+      <tr>                                                                                                                                                                                                                   
+          <th id='color'>Sl.No</th>
+          <th id='color'>Date</th>
+          <th id='color'>Name of the client</th>
+          <th id='color'>Amount</th>
+          <th id='color'>GST</th>
+          <th id='color'>Income</th>
+          <th id='color'>Outgoing</th>
+          <th id='color'>Total</th>
+      </tr>
+  </thead>
+  <tbody>
+       {
+          data.map((data, index) => (
+                  <tr key={index}>
+                      <td id='color'>{index+1}</td>
+                      <td id='color'>{data.id}</td>
+                      <td id='color'>{data.incomeSRC}</td>
+                      <td id='color'>{data.paymentModeBy}</td>
+                      <td id='color'>{data.paymentRecievedBy}</td>
+                      <td id='color'>{data.amountPaid}<p id='zz'>{total = parseInt(data.amountPaid) + parseInt(total)}</p></td> 
+            </tr>))           
+        }  
+  </tbody>
+  </table>
+ </div>
+ <div class="modal-footer">
+  <button id='gstcl' type="button" class="btn btn-default btn-sm" data-dismiss="modal">Close</button>
   </div>
   </div>
   </div>
   </div>
-       
 
 {/* -----------------------------------------------OUTGOING TABLE--------------------------------------------------------- */}
         <div class="modal fade" id="viewOutgoing" role="dialog">
@@ -561,7 +695,7 @@ const AccountsAdmin = () => {
                       <td id='color'>{data.typeOfPay}</td>
                       <td id='color'>{data.supportDoc}</td>
                   </tr>))
-      } 
+        } 
   </tbody>
   </table>
   <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Close</button>
@@ -570,6 +704,59 @@ const AccountsAdmin = () => {
   </div>
   </div>
 
+
+{/*-------------------------------------dummy-------------------------------------------- */}
+<div class="modal fade" id="dummyOutgoing" role="dialog">
+        <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+        <div class="modal-header">
+        <div>
+          <h1 class='title'> View Outgoing Information</h1>
+        </div>   
+ 
+  <table class='table table-bordered'>
+  <thead>
+      <tr>
+          <th id='color'>Name</th>
+          <th id='color'>Phone No</th>
+          {/* <th id='color'>Time</th>
+          <th id='color'>Payment-mode by</th>
+          <th id='color'>Payment-recieved</th>
+          <th id='color'>Amount paid</th>
+          <th id='color'>GST</th>
+          <th id='color'>GST total amont</th>
+          <th id='color'>Payment-mode</th>
+          <th id='color'>Narration-No</th>
+          <th id='color'>Type of payment</th>
+          <th id='color'>Support-Documents</th> */}
+      </tr>
+  </thead>
+  <tbody>
+       {
+          data.map(data => (
+                  <tr key={data.id}>
+                    {/* <td id='color'> <button type="button" value="ViewAccOutgoing" class="btn btn-info btn-sm, btn1" data-toggle="modal" data-target="#invoiceOutgoingModal" onClick={() => handleEditOut(data)}>View</button></td>
+                      <td id='color'>{data.incomeSRC}</td>
+                      <td id='color'>{data.date}</td>
+                      <td id='color'>{data.time}</td>
+                      <td id='color'>{data.paymentModeBy}</td>
+                      <td id='color'>{data.paymentRecievedBy}</td>
+                      <td id='color'>{data.amountPaid}</td>
+                      <td id='color'>{data.gstCal}</td>
+                      <td id='color'>{data.gstAmount}</td>
+                      <td id='color'>{data.paymentMode}</td>
+                      <td id='color'>{data.narration}</td> */}
+                      <td id='color'>{data.name}</td>
+                      <td id='color'>{data.phone}</td>
+                  </tr>))
+        } 
+  </tbody>
+  </table>
+  <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Close</button>
+  </div>
+  </div>
+  </div>
+  </div>
 
 {/* ------------------------------------------------INCOME TABLE----------------------------------------------------------- */}
 
@@ -615,7 +802,7 @@ const AccountsAdmin = () => {
                       <td id='color'>{data.narration}</td>
                       <td id='color'>{data.supportDoc}</td>
                   </tr>))
-      } 
+        } 
   </tbody>
   </table>
   <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Close</button>
@@ -623,7 +810,7 @@ const AccountsAdmin = () => {
   </div>
   </div>
   </div>
-  </div>  
+  </div>         
   </>
 )
 }
